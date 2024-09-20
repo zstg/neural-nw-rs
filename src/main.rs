@@ -2,12 +2,12 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 use rand::Rng;
-use std::f32::{self, consts::E};
+use std::f32::{self,consts::E};
 
 struct Math;
 
 impl Math {
-    fn exp(x: f32) -> f32 { f32::powf(E, x) }
+    fn exp(x: f32) -> f32 { E.powf(x) } // without `use std::f32::self` you'd use `f32::pow(E,x)`
 
     fn sigmoid(x: f32) -> f32 { 1.0 / (1.0 + Self::exp(-x)) }
 
@@ -105,7 +105,7 @@ impl Layer for InputLayer {
     }
 
     fn backward(&mut self, error: Vec<f32>) {
-        // todo!() // The input layer does not need/use backprop...
+        // The input layer does not need/use backprop...
     }
 
     fn output(&self) -> Vec<f32> {
@@ -153,7 +153,6 @@ impl Layer for HiddenLayer {
     }
 
     fn backward(&mut self, error: Vec<f32>) {
-        // Implement the backpropagation logic here
         // Calculate the gradient with respect to weights and biases
         let gradients: Vec<f32> = self.output.iter()
             .zip(error.iter())
@@ -216,7 +215,6 @@ impl Layer for OutputLayer {
     }
 
     fn backward(&mut self, error: Vec<f32>) {
-        // Implement the backpropagation logic here
         let gradients: Vec<f32> = self.output.iter()
             .zip(error.iter())
             .map(|(o, e)| Math::sigmoid_prime(*o) * e)
@@ -314,7 +312,7 @@ fn main() {
     ];
 
     // Training the neural network
-    nn.fit(inputs.clone(), targets.clone(), 1000); // if we don't use clone here the model starts from altered data each time, so it will start to learn incorrectly from subsequent epochs
+    nn.fit(inputs.clone(), targets.clone(), 1_000_000); // if we don't use clone here the model starts from altered data each time, so it will start to learn incorrectly from subsequent epochs
 
     // Predicting
     let input = vec![0.5, -1.5, 1.0];
